@@ -44,4 +44,8 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Authority> authorityList;
 
+    public void addRole(Authority authority) {
+        authorityList.add(authority);
+        authority.setMember(this);
+    }
 }
