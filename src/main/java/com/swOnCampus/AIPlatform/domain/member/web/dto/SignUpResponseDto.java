@@ -13,6 +13,5 @@ public class SignUpResponseDto {
     @NoArgsConstructor
     public static class SignUpResponse {
         private String name;
-        private String token;
     }
 }
