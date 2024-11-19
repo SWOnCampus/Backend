@@ -1,25 +1,38 @@
 package com.swOnCampus.AIPlatform.domain.member.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.swOnCampus.AIPlatform.domain.member.entity.Authority;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.repository.MemberRepository;
 import com.swOnCampus.AIPlatform.domain.member.web.dto.EmailCheckRequestDto;
+import com.swOnCampus.AIPlatform.domain.member.web.dto.SignUpRequestDto;
+import com.swOnCampus.AIPlatform.domain.member.web.dto.SignUpResponseDto;
+import com.swOnCampus.AIPlatform.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static com.swOnCampus.AIPlatform.domain.member.enums.Authorities.ROLE_ADMIN;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MemberServiceImpl implements MemberService {
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Value(value = "${spring.api.businessCheck.decodingKey}")
     private String decodingKey;
@@ -72,5 +85,39 @@ public class MemberServiceImpl implements MemberService {
         return (response != null) && (response.path("status_code").asInt() == 200);
     }
 
+    @Override
+    public SignUpResponseDto.SignUpResponse signUp(SignUpRequestDto.SignupRequest request) {
+        Member newMember = Member.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .name(request.getName())
+                .phone(request.getPhone())
+                .businessNum(request.getBusinessNum())
+                .signUpRoute(request.getSignupRoute())
+                .corporation(request.getCorporation())
+                .authorityList(new ArrayList<>())
+                .build();
+
+        Authority authority = Authority.builder()
+                .type(ROLE_ADMIN)
+                .build();
+
+        newMember.addRole(authority);
+
+        memberRepository.save(newMember);
+
+        List<Authority> authorities = newMember.getAuthorityList().stream()
+                .map(Function.identity())
+                .collect(Collectors.toList());
+
+        String token = jwtTokenProvider.createToken(newMember.getEmail(), authorities);
+
+        SignUpResponseDto.SignUpResponse response = SignUpResponseDto.SignUpResponse.builder()
+                .name(newMember.getName())
+                .token(token)
+                .build();
+
+        return response;
+    }
 
 }
