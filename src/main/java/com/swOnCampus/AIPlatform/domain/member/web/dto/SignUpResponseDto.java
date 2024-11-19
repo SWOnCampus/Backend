@@ -1,4 +1,4 @@
 package com.swOnCampus.AIPlatform.domain.member.web.dto;
 
-public class MemberResponseDto {
+public class SignUpResponseDto {
 }
