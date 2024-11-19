@@ -53,13 +53,22 @@ public class MemberController {
         return ResponseEntity.ok(successResponse);
     }
 
+    // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<?>> signup(@Valid @RequestBody SignUpRequestDto.SignupRequest request){
         SignUpResponseDto.SignUpResponse response = memberService.signUp(request);
 
-        ApiResponse<SignUpResponseDto.SignUpResponse> signupResponse = ApiResponse.createFailWithoutData(HttpStatus.OK.value(), "회원가입에 성공하였습니다.");
+        ApiResponse<SignUpResponseDto.SignUpResponse> signupResponse = ApiResponse.createSuccess(HttpStatus.OK.value(),response, "회원가입에 성공하였습니다.");
         return ResponseEntity.ok(signupResponse);
     }
 
+    // 로그인
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginRequestDto.LoginRequest request){
+        LoginResponseDto.LoginResponse response = memberService.login(request);
+
+        ApiResponse<LoginResponseDto.LoginResponse> loginResponse = ApiResponse.createSuccess(HttpStatus.OK.value(), response,"로그인에 성공하였습니다.");
+        return ResponseEntity.ok(loginResponse);
+    }
 
 }
