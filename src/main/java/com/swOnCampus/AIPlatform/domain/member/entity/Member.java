@@ -1,6 +1,5 @@
 package com.swOnCampus.AIPlatform.domain.member.entity;
 
-import com.swOnCampus.AIPlatform.domain.member.enums.Authorities;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
