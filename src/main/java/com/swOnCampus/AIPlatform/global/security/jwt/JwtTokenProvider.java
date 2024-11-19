@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    @Value("${security.jwt.custom.secretKey}")
+    @Value(value = "${spring.security.jwt.custom.secretKey}")
     private String secretKey;
 
-    @Value("${security.jwt.expiration.time}")
+    @Value(value = "${spring.security.jwt.expiration.time}")
     private long expirationTime;
 
     private Key key;
