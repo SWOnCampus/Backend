@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.swOnCampus.AIPlatform.domain.member.entity.Authority;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.repository.MemberRepository;
-import com.swOnCampus.AIPlatform.domain.member.web.dto.EmailCheckRequestDto;
-import com.swOnCampus.AIPlatform.domain.member.web.dto.SignUpRequestDto;
-import com.swOnCampus.AIPlatform.domain.member.web.dto.SignUpResponseDto;
+import com.swOnCampus.AIPlatform.domain.member.web.dto.*;
 import com.swOnCampus.AIPlatform.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +50,7 @@ public class MemberServiceImpl implements MemberService {
         return false;
     }
 
+    // 사업자번호 인증 함수
     @Override
     public Boolean isExistCorporation(String corporation) {
 
@@ -85,6 +84,7 @@ public class MemberServiceImpl implements MemberService {
         return (response != null) && (response.path("status_code").asInt() == 200);
     }
 
+    // 회원가입 함수
     @Override
     public SignUpResponseDto.SignUpResponse signUp(SignUpRequestDto.SignupRequest request) {
         Member newMember = Member.builder()
@@ -110,10 +110,37 @@ public class MemberServiceImpl implements MemberService {
                 .map(Function.identity())
                 .collect(Collectors.toList());
 
-        String token = jwtTokenProvider.createToken(newMember.getEmail(), authorities);
-
         SignUpResponseDto.SignUpResponse response = SignUpResponseDto.SignUpResponse.builder()
                 .name(newMember.getName())
+                .build();
+
+        return response;
+    }
+
+    // 로그인 함수
+    @Override
+    public LoginResponseDto.LoginResponse login(LoginRequestDto.LoginRequest request) {
+        log.info("::email : {}::", request.getEmail());
+        log.info("::password : {}::", request.getPassword());
+
+        if(!memberRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("존재하지 않는 회원입니다.");
+        }
+
+        Member member = memberRepository.findByEmail(request.getEmail()).orElseThrow(RuntimeException::new);
+
+        if(!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        List<Authority> authorities = member.getAuthorityList().stream()
+                .map(Function.identity())
+                .collect(Collectors.toList());
+
+        String token = jwtTokenProvider.createToken(member.getEmail(), authorities);
+
+        LoginResponseDto.LoginResponse response = LoginResponseDto.LoginResponse.builder()
+                .name(member.getName())
                 .token(token)
                 .build();
 
