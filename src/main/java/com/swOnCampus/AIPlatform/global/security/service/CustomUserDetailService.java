@@ -20,7 +20,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
-        Member member = memberRepository.findByLoginId(loginId).orElseThrow(RuntimeException::new);
+        Member member = memberRepository.findByEmail(loginId).orElseThrow(RuntimeException::new);
 
         List<GrantedAuthority> authorities = member.getAuthorityList().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getType().name()))
