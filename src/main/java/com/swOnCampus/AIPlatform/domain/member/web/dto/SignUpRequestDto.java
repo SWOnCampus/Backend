@@ -13,5 +13,9 @@ public class SignUpRequestDto {
         private String email;
         private String password;
         private String name;
+        private String phone;
+        private String businessNum;
+        private String signupRoute;
+        private String corporation;
     }
 }
