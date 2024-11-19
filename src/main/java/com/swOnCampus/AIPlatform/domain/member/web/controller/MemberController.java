@@ -1,10 +1,8 @@
 package com.swOnCampus.AIPlatform.domain.member.web.controller;
 
+import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.service.MemberService;
-import com.swOnCampus.AIPlatform.domain.member.web.dto.BusinessCheckRequestDto;
-import com.swOnCampus.AIPlatform.domain.member.web.dto.BusinessCheckResponseDto;
-import com.swOnCampus.AIPlatform.domain.member.web.dto.EmailCheckRequestDto;
-import com.swOnCampus.AIPlatform.domain.member.web.dto.EmailCheckResponseDto;
+import com.swOnCampus.AIPlatform.domain.member.web.dto.*;
 import com.swOnCampus.AIPlatform.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,4 +52,14 @@ public class MemberController {
         ApiResponse<BusinessCheckResponseDto.BusinessCheckResponse> successResponse = ApiResponse.createSuccess(HttpStatus.OK.value(), responseDto, "사업자번호 인증이 성공적으로 완료되었습니다.");
         return ResponseEntity.ok(successResponse);
     }
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<?>> signup(@Valid @RequestBody SignUpRequestDto.SignupRequest request){
+        SignUpResponseDto.SignUpResponse response = memberService.signUp(request);
+
+        ApiResponse<SignUpResponseDto.SignUpResponse> signupResponse = ApiResponse.createFailWithoutData(HttpStatus.OK.value(), "회원가입에 성공하였습니다.");
+        return ResponseEntity.ok(signupResponse);
+    }
+
+
 }
