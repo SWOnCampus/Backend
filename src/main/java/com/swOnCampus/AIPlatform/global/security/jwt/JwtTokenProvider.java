@@ -9,11 +9,11 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    @Value("${jwt.custom.secretKey}")
+    @Value("${security.jwt.custom.secretKey}")
     private String secretKey;
 
-    @Value("${JWT.expiration.time}")
+    @Value("${security.jwt.expiration.time}")
     private long expirationTime;
 
     private Key key;
