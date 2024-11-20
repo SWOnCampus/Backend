@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: AIPlatform
+  thymeleaf:
+    cache: true
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
