@@ -1,6 +1,8 @@
 package com.swOnCampus.AIPlatform.domain.member.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swOnCampus.AIPlatform.domain.member.entity.Authority;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.repository.MemberRepository;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
@@ -32,11 +35,11 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value(value = "${spring.api.businessCheck.decodingKey}")
-    private String decodingKey;
-
     @Value(value = "${spring.api.businessCheck.encodingKey}")
     private String encodingKey;
+
+    @Value(value = "${spring.api.businessCheck.decodingKey}")
+    private String decodingKey;
 
     // Email 중복 검사 함수
     @Override
@@ -53,35 +56,49 @@ public class MemberServiceImpl implements MemberService {
     // 사업자번호 인증 함수
     @Override
     public Boolean isExistCorporation(String corporation) {
-
-        String num = corporation.replace("-", "");
+        String num = corporation.replace("-", ""); // 사업자 번호에서 '-' 제거
 
         WebClient client = WebClient.builder()
                 .baseUrl("https://api.odcloud.kr/api/nts-businessman/v1/status")
                 .build();
 
+        // 요청 Body 생성
         Map<String, Object> requestBody = new HashMap<>();
-        List<Map<String, String>> businessNumbers = new ArrayList<>();
-        Map<String, String> businessNumber = new HashMap<>();
-        businessNumber.put("b_no", num);
-        businessNumbers.add(businessNumber);
-        requestBody.put("b_no", businessNumbers);
+        requestBody.put("b_no", List.of(num)); // 사업자 번호 리스트 추가
 
-        String uri = UriComponentsBuilder.fromUriString("")
-                .queryParam("serviceKey", encodingKey)
-                .build()
+        // URI 생성
+        String uri = UriComponentsBuilder.fromHttpUrl("https://api.odcloud.kr/api/nts-businessman/v1/status")
+                .queryParam("serviceKey", decodingKey) // 인증 키 추가
                 .toUriString();
 
-        JsonNode response = client.post()
-                .uri(uri)
-                .header("Content-Type", "application/json")
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .doOnNext(System.out::println)
-                .block();
+        try {
+            // API 호출 및 응답 받기 (String으로 받음)
+            String responseBody = client.post()
+                    .uri(uri)
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToMono(String.class) // 응답을 String으로 수신
+                    .block();
 
-        return (response != null) && (response.path("status_code").asInt() == 200);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> response = objectMapper.readValue(responseBody, new TypeReference<>() {});
+
+            System.out.println("Parsed Response: " + response);
+
+            Integer statusCode = (Integer) response.get("status_code");
+            return statusCode != null && statusCode == 200;
+
+        } catch (WebClientResponseException e) {
+            System.out.println("Error Response: " + e.getResponseBodyAsString());
+            e.printStackTrace();
+            return false;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // 회원가입 함수
