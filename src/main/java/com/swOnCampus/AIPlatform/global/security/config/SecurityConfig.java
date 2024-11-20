@@ -40,7 +40,7 @@ public class SecurityConfig {
                         // swagger 관련
                         .requestMatchers("/v2/api-docs","/swagger-resources/**","/swagger-ui.html","/webjars/**","/swagger-ui/**","/v3/api-docs/**","/v2/swagger.json").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/", "/login","/signup").permitAll()
+                        .requestMatchers("/", "/login","/signup", "/corporation-num-check", "/email-check").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 )
