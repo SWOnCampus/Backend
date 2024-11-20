@@ -6,3 +6,6 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
+report:
+  font:
+    path: static/font/NanumBarunGothic.ttf
