@@ -1,26 +1,24 @@
 package com.swOnCampus.AIPlatform.domain.member.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swOnCampus.AIPlatform.domain.member.entity.Authority;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.repository.MemberRepository;
-import com.swOnCampus.AIPlatform.domain.member.web.dto.*;
+import com.swOnCampus.AIPlatform.domain.member.web.dto.LoginRequestDto;
+import com.swOnCampus.AIPlatform.domain.member.web.dto.LoginResponseDto;
+import com.swOnCampus.AIPlatform.domain.member.web.dto.SignUpRequestDto;
+import com.swOnCampus.AIPlatform.domain.member.web.dto.SignUpResponseDto;
 import com.swOnCampus.AIPlatform.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jackson.JsonComponent;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,6 +32,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RestTemplate restTemplate;
 
     @Value(value = "${spring.api.businessCheck.encodingKey}")
     private String encodingKey;
@@ -56,50 +55,44 @@ public class MemberServiceImpl implements MemberService {
     // 사업자번호 인증 함수
     @Override
     public Boolean isExistCorporation(String corporation) {
-        String num = corporation.replace("-", ""); // 사업자 번호에서 '-' 제거
+        String num = corporation.replace("-", "");
 
-        WebClient client = WebClient.builder()
-                .baseUrl("https://api.odcloud.kr/api/nts-businessman/v1/status")
-                .build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        // 요청 Body 생성
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("b_no", List.of(num)); // 사업자 번호 리스트 추가
+        Map<String, Object> body = new HashMap<>();
+        body.put("b_no", List.of(num));
 
-        // URI 생성
-        String uri = UriComponentsBuilder.fromHttpUrl("https://api.odcloud.kr/api/nts-businessman/v1/status")
-                .queryParam("serviceKey", decodingKey) // 인증 키 추가
-                .toUriString();
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        String url = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=" + encodingKey;
 
         try {
-            // API 호출 및 응답 받기 (String으로 받음)
-            String responseBody = client.post()
-                    .uri(uri)
-                    .header("Content-Type", "application/json")
-                    .header("Accept", "application/json")
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(String.class) // 응답을 String으로 수신
-                    .block();
+            ResponseEntity<String> response = restTemplate.postForEntity(new URI(url), entity, String.class);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> response = objectMapper.readValue(responseBody, new TypeReference<>() {});
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, Object> responseBody = objectMapper.readValue(response.getBody(), new TypeReference<>() {});
 
-            System.out.println("Parsed Response: " + response);
+                System.out.println("Response: " + responseBody);
 
-            Integer statusCode = (Integer) response.get("status_code");
-            return statusCode != null && statusCode == 200;
-
-        } catch (WebClientResponseException e) {
-            System.out.println("Error Response: " + e.getResponseBodyAsString());
-            e.printStackTrace();
+                List<Map<String, Object>> dataList = (List<Map<String, Object>>) responseBody.get("data");
+                if (dataList != null && !dataList.isEmpty()) {
+                    Map<String, Object> businessInfo = dataList.get(0);
+                    String status = (String) businessInfo.get("tax_type");
+                    return status != null && !status.isEmpty();
+                }
+            }
             return false;
 
         } catch (Exception e) {
+            // 에러 처리
             e.printStackTrace();
             return false;
         }
     }
+
 
     // 회원가입 함수
     @Override
