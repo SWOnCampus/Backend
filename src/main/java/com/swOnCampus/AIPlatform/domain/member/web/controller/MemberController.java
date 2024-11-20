@@ -1,6 +1,5 @@
 package com.swOnCampus.AIPlatform.domain.member.web.controller;
 
-import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.service.MemberService;
 import com.swOnCampus.AIPlatform.domain.member.web.dto.*;
 import com.swOnCampus.AIPlatform.global.response.ApiResponse;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class MemberController {
     private final MemberService memberService;
 
@@ -40,7 +38,7 @@ public class MemberController {
     public ResponseEntity<ApiResponse<?>> corporationCheck(@Valid @RequestBody BusinessCheckRequestDto.BusinessCheckRequest request){
         if(!memberService.isExistCorporation(request.getBusinessNumber())){
 
-            ApiResponse<?> failResponse = ApiResponse.createFailWithoutData(HttpStatus.NO_CONTENT.value(), "존재하지 않는 사업자번호입니다.");
+            ApiResponse<?> failResponse = ApiResponse.createFailWithoutData(HttpStatus.NO_CONTENT.value(), "국세청에 등록되지 않은 사업자번호입니다.");
 
             return ResponseEntity.badRequest().body(failResponse);
         }
