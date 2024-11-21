@@ -81,7 +81,9 @@ public class MemberServiceImpl implements MemberService {
                 if (dataList != null && !dataList.isEmpty()) {
                     Map<String, Object> businessInfo = dataList.get(0);
                     String status = (String) businessInfo.get("tax_type");
-                    return status != null && !status.isEmpty();
+                    if(!status.equals("국세청에 등록되지 않은 사업자등록번호입니다.")){
+                        return true;
+                    }
                 }
             }
             return false;
