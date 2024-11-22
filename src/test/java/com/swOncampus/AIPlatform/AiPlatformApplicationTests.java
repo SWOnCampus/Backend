@@ -1,4 +1,4 @@
-package com.swOncampus.AIPlatform;
+package com.swOnCampus.AIPlatform;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
