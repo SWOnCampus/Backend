@@ -5,7 +5,10 @@ import com.swOnCampus.AIPlatform.domain.consulting.web.dto.request.CompanyInfoRe
 import com.swOnCampus.AIPlatform.domain.consulting.web.dto.response.ConsultingResponse;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.global.annotation.LoginMember;
+import com.swOnCampus.AIPlatform.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,7 @@ public class ConsultingController {
     private final CompanyService companyService;
 
     @PostMapping()
-    public ConsultingResponse createConsulting(
+    public ResponseEntity<ApiResponse<?>> createConsulting(
         @LoginMember Member member,
         @RequestBody CompanyInfoRequest companyInfoRequest,
         @RequestParam(defaultValue = "false") boolean summary
@@ -28,6 +31,9 @@ public class ConsultingController {
         ConsultingResponse result = companyService.saveCompanyInfo(member.getMemberId(),
             companyInfoRequest, summary);
 
-        return result;
+        ApiResponse<ConsultingResponse> response = ApiResponse.createSuccess(HttpStatus.OK.value(),
+            result, "컨설팅 결과가 생성되었습니다.");
+
+        return ResponseEntity.ok(response);
     }
 }
