@@ -2,6 +2,7 @@ package com.swOnCampus.AIPlatform.domain.consulting.entity;
 
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.global.entity.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,6 +41,9 @@ public class Company extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String painPoint;
+
+    @OneToOne(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Consulting consulting;
 
     @Builder
     public Company(Member member, String name, String companySize, String industry,
