@@ -1,4 +1,4 @@
-name: Toast Dev CI/CD
+name: SwOnCampus Dev CI/CD
 
 on:
   push:
