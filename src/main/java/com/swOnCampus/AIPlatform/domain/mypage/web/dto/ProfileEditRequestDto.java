@@ -13,6 +13,5 @@ public class ProfileEditRequestDto {
         private String email;
         private String name;
         private String phone;
-        private String corporationNum;
     }
 }

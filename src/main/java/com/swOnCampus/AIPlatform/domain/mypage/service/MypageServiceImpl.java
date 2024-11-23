@@ -51,7 +51,6 @@ public class MypageServiceImpl implements MypageService {
         member.setEmail(request.getEmail());
         member.setName(request.getName());
         member.setPhone(request.getPhone());
-        member.setBusinessNum(request.getCorporationNum());
 
         memberRepository.save(member);
 
@@ -67,7 +66,6 @@ public class MypageServiceImpl implements MypageService {
                 .name(updatedMember.getName())
                 .email(updatedMember.getEmail())
                 .phone(updatedMember.getPhone())
-                .corporationNum(updatedMember.getBusinessNum())
                 .build();
 
         return response;

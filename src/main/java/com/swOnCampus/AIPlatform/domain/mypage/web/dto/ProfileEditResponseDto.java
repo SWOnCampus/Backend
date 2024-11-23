@@ -16,6 +16,5 @@ public class ProfileEditResponseDto {
         private String name;
         private String phone;
         private String email;
-        private String corporationNum;
     }
 }
