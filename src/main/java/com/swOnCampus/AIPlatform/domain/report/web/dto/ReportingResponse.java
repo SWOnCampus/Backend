@@ -7,7 +7,7 @@ import lombok.Builder;
 public record ReportingResponse(
     @Schema(description = "컨설팅 요약 내용", example = "컨설팅 요약")
     String summary,
-    @Schema(description = "컨설팅 전체 내용 PDF", example = "byte")
+    @Schema(description = "컨설팅 전체 내용 PDF 파일의 Base64 인코딩 데이터", example = "byte")
     String pdf
 ) {
 
