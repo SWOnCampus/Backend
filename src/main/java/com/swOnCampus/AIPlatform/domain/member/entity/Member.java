@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,9 +45,6 @@ public class Member {
     @Column(name = "business_num")
     private String businessNum;
 
-    @Column(name = "corporation")
-    private String corporation;
-
     @Column(name = "sign_up_route")
     private String signUpRoute;
 
@@ -58,5 +57,10 @@ public class Member {
     public void addRole(Authority authority) {
         authorityList.add(authority);
         authority.setMember(this);
+    }
+
+    public void addCompany(Company company) {
+        companies.add(company);
+        company.setMember(this);
     }
 }

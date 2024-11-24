@@ -15,7 +15,7 @@ public class ConsultingServiceImpl implements ConsultingService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${ai.api.url}")
+    @Value(value = "${ai.api.url}")
     private String aiApiUrl;
 
     @Override

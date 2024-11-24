@@ -2,6 +2,7 @@ package com.swOnCampus.AIPlatform.domain.member.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swOnCampus.AIPlatform.domain.consulting.entity.Company;
 import com.swOnCampus.AIPlatform.domain.member.entity.Authority;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.repository.MemberRepository;
@@ -105,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
                 .phone(request.getPhone())
                 .businessNum(request.getBusinessNum())
                 .signUpRoute(request.getSignupRoute())
-                .corporation(request.getCorporation())
+                .companies(new ArrayList<>())
                 .authorityList(new ArrayList<>())
                 .build();
 
@@ -115,11 +116,26 @@ public class MemberServiceImpl implements MemberService {
 
         newMember.addRole(authority);
 
-        memberRepository.save(newMember);
+        Company company = Company.builder()
+                .name(request.getName())
+                .companySize("")
+                .industry("")
+                .painPoint("")
+                .build();
+
+        newMember.addCompany(company);
 
         List<Authority> authorities = newMember.getAuthorityList().stream()
                 .map(Function.identity())
                 .collect(Collectors.toList());
+
+        List<Company> newCompanies = new ArrayList<>();
+        newCompanies.add(company);
+
+        newMember.setAuthorityList(authorities);
+        newMember.setCompanies(newCompanies);
+
+        memberRepository.save(newMember);
 
         SignUpResponseDto.SignUpResponse response = SignUpResponseDto.SignUpResponse.builder()
                 .name(newMember.getName())

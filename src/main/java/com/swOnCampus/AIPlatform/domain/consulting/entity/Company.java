@@ -56,4 +56,8 @@ public class Company extends BaseEntity {
         this.industry = industry;
         this.painPoint = painPoint;
     }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
 }
