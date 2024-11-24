@@ -1,13 +1,16 @@
 package com.swOnCampus.AIPlatform.domain.report.web.controller;
 
+import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.report.service.ReportService;
-import com.swOnCampus.AIPlatform.domain.report.web.dto.ReportingSummaryRequest;
+import com.swOnCampus.AIPlatform.domain.report.web.dto.ReportingResponse;
+import com.swOnCampus.AIPlatform.global.annotation.LoginMember;
+import com.swOnCampus.AIPlatform.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -18,19 +21,17 @@ public class ReportController {
     private final ReportService reportService;
 
     @GetMapping()
-    public ResponseEntity<byte[]> createReportingSummaryPdf(Model model) {
-        model.addAttribute("title", "리포팅 요약");
-        model.addAttribute("content", "내용");
+    public ResponseEntity<ApiResponse<?>> createReportingPdf(
+        @LoginMember Member member,
+        @RequestParam Long companyId // 채팅방 id
+    ) {
+        ReportingResponse reportingResponse = reportService.createReportingPdf(
+            member.getMemberId(), companyId);
 
-        ReportingSummaryRequest request = ReportingSummaryRequest.builder()
-                .title(model.getAttribute("title").toString())
-                .content(model.getAttribute("content").toString())
-                .build();
+        ApiResponse<ReportingResponse> response = ApiResponse.createSuccess(HttpStatus.OK.value(),
+            reportingResponse,
+            "PDF 파일이 생성되었습니다.");
 
-        byte[] pdfData = reportService.createReportingSummaryPdf(request);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdfData);
+        return ResponseEntity.ok(response);
     }
 }
