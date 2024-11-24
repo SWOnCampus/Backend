@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-@Tag(name = "실시간 뉴스 데이터 API", description = "뉴스 데이터 관련 API")
+@Tag(name = "회원가입/로그인 API", description = "회원가입/로그인 관련 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
