@@ -10,12 +10,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 @SpringBootApplication
 @EntityScan(basePackages = {
-		"com/swOnCampus/AIPlatform/domain/member/entity"
+    "com/swOnCampus/AIPlatform/domain/member/entity",
+    "com/swOnCampus/AIPlatform/domain/consulting/entity"
 })
 public class AiPlatformApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AiPlatformApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AiPlatformApplication.class, args);
+    }
 
 }
