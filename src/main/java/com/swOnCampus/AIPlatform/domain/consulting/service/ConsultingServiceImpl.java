@@ -1,7 +1,8 @@
 package com.swOnCampus.AIPlatform.domain.consulting.service;
 
+import com.swOnCampus.AIPlatform.domain.consulting.web.dto.ConsultingSave;
 import com.swOnCampus.AIPlatform.domain.consulting.web.dto.request.ConsultingRequest;
-import com.swOnCampus.AIPlatform.domain.consulting.web.dto.response.ConsultingResponse;
+import com.swOnCampus.AIPlatform.domain.consulting.web.dto.response.ConsultingAiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,20 @@ public class ConsultingServiceImpl implements ConsultingService {
     private String aiApiUrl;
 
     @Override
-    public ConsultingResponse sendToAi(ConsultingRequest request, boolean summary) {
+    public ConsultingSave getConsultingResult(ConsultingRequest request) {
+        ConsultingSave response = new ConsultingSave(
+            sendRequestToAi(request, false).result(),
+            sendRequestToAi(request, true).result()
+        );
+
+        return response;
+    }
+
+    private ConsultingAiResponse sendRequestToAi(ConsultingRequest request, boolean summary) {
         String url = UriComponentsBuilder.fromHttpUrl(aiApiUrl + "/api/consulting")
             .queryParam("summary", summary)
             .toUriString();
 
-        return restTemplate.postForObject(url, request, ConsultingResponse.class);
+        return restTemplate.postForObject(url, request, ConsultingAiResponse.class);
     }
 }
