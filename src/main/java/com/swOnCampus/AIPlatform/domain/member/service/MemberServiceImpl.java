@@ -10,6 +10,7 @@ import com.swOnCampus.AIPlatform.domain.member.web.dto.LoginResponseDto;
 import com.swOnCampus.AIPlatform.domain.member.web.dto.SignUpRequestDto;
 import com.swOnCampus.AIPlatform.domain.member.web.dto.SignUpResponseDto;
 import com.swOnCampus.AIPlatform.global.security.jwt.JwtTokenProvider;
+import com.swOnCampus.AIPlatform.domain.member.enums.Authorities;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +23,6 @@ import java.net.URI;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static com.swOnCampus.AIPlatform.domain.member.enums.Authorities.ROLE_ADMIN;
 
 @Service
 @RequiredArgsConstructor
@@ -111,7 +110,7 @@ public class MemberServiceImpl implements MemberService {
                 .build();
 
         Authority authority = Authority.builder()
-                .type(ROLE_ADMIN)
+                .type(Authorities.ROLE_ADMIN)
                 .build();
 
         newMember.addRole(authority);
