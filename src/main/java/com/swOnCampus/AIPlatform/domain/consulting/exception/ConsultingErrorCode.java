@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ConsultingErrorCode implements ErrorCode {
     // 404
-    NOT_EXIST_USER(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다.");
+    NOT_EXIST_CONSULTING(HttpStatus.NOT_FOUND, "해당 기업에 대한 컨설팅 결과가 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
