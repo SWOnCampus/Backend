@@ -9,7 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+@Tag(name = "실시간 뉴스 데이터 API", description = "뉴스 데이터 관련 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -17,6 +23,20 @@ public class MemberController {
     private final MemberService memberService;
 
     // 이메일 인증
+    @Operation(summary = "이메일 중복 여부 체크 API 요청", description = "회원가입 시 이메일 중복 여부 체크 API 요청")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "COMMON200",
+                    description = "요청 성공",
+                    content = {
+                            @Content(
+                                    schema = @Schema(
+                                            implementation = EmailCheckResponseDto.EmailCheckResponse.class
+                                    )
+                            )
+                    }
+            )
+    })
     @GetMapping("/email-check")
     public ResponseEntity<ApiResponse<?>> emailCheck(@Valid @RequestBody EmailCheckRequestDto.EmailCheckRequest request){
         if(memberService.isExistEmail(request.getEmail())){
