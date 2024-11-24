@@ -1,8 +1,11 @@
 package com.swOnCampus.AIPlatform.domain.consulting.service;
 
 import com.swOnCampus.AIPlatform.domain.consulting.entity.Company;
+import com.swOnCampus.AIPlatform.domain.consulting.entity.Consulting;
+import com.swOnCampus.AIPlatform.domain.consulting.exception.ConsultingErrorCode;
 import com.swOnCampus.AIPlatform.domain.consulting.repository.CompanyRepository;
 import com.swOnCampus.AIPlatform.domain.consulting.repository.ConsultingRepository;
+import com.swOnCampus.AIPlatform.domain.consulting.web.dto.ConsultingSave;
 import com.swOnCampus.AIPlatform.domain.consulting.web.dto.request.CompanyInfoRequest;
 import com.swOnCampus.AIPlatform.domain.consulting.web.dto.request.ConsultingRequest;
 import com.swOnCampus.AIPlatform.domain.consulting.web.dto.response.ConsultingResponse;
@@ -23,14 +26,24 @@ public class CompanyServiceImpl implements CompanyService {
     private final ConsultingService consultingService;
 
     @Override
-    public ConsultingResponse saveCompanyInfo(
+    public ConsultingResponse createOrGetConsulting(
         Long memberId,
         CompanyInfoRequest companyInfoRequest,
-        boolean summary
+        Long companyId // 채팅방 id
     ) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new GlobalException(CommonErrorCode.NOT_EXIST_MEMBER));
 
+        if (companyId == null) {
+            companyId = createCompanyWithConsulting(member, companyInfoRequest);
+        }
+        Consulting consulting = consultingRepository.findByCompanyId(companyId)
+            .orElseThrow(() -> new GlobalException(ConsultingErrorCode.NOT_EXIST_CONSULTING));
+
+        return new ConsultingResponse(consulting.getSummary());
+    }
+
+    private Long createCompanyWithConsulting(Member member, CompanyInfoRequest companyInfoRequest) {
         Company company = Company.builder()
             .member(member)
             .name(companyInfoRequest.name())
@@ -41,11 +54,20 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.save(company);
 
         ConsultingRequest consultingRequest = new ConsultingRequest(
-            companyInfoRequest.companySize(),
             companyInfoRequest.industry(),
+            companyInfoRequest.companySize(),
             companyInfoRequest.painPoint()
         );
 
-        return consultingService.sendToAi(consultingRequest, summary);
+        ConsultingSave result = consultingService.getConsultingResult(consultingRequest);
+
+        Consulting consulting = Consulting.builder()
+            .company(company)
+            .result(result.result())
+            .summary(result.summary())
+            .build();
+        consultingRepository.save(consulting);
+
+        return consulting.getCompany().getId();
     }
 }

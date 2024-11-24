@@ -26,10 +26,10 @@ public class ConsultingController {
     public ResponseEntity<ApiResponse<?>> createConsulting(
         @LoginMember Member member,
         @RequestBody CompanyInfoRequest companyInfoRequest,
-        @RequestParam(defaultValue = "false") boolean summary
+        @RequestParam(required = false) Long companyId // 채팅방 id
     ) {
-        ConsultingResponse result = companyService.saveCompanyInfo(member.getMemberId(),
-            companyInfoRequest, summary);
+        ConsultingResponse result = companyService.createOrGetConsulting(
+            member.getMemberId(), companyInfoRequest, companyId);
 
         ApiResponse<ConsultingResponse> response = ApiResponse.createSuccess(HttpStatus.OK.value(),
             result, "컨설팅 결과가 생성되었습니다.");

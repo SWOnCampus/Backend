@@ -5,9 +5,9 @@ import com.swOnCampus.AIPlatform.domain.consulting.web.dto.response.ConsultingRe
 
 public interface CompanyService {
 
-    ConsultingResponse saveCompanyInfo(
+    ConsultingResponse createOrGetConsulting(
         Long memberId,
         CompanyInfoRequest companyInfoRequest,
-        boolean summary
+        Long chatRoomId
     );
 }
