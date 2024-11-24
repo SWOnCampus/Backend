@@ -46,6 +46,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	// flying saucer
 	implementation 'org.xhtmlrenderer:flying-saucer-pdf:9.9.1'
+	// markdown
+	implementation 'org.commonmark:commonmark:0.21.0'
 	// postgre
 	implementation 'org.postgresql:postgresql:42.7.4'
 	runtimeOnly 'org.postgresql:postgresql'
