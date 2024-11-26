@@ -100,6 +100,7 @@ public class MemberServiceImpl implements MemberService {
     // 회원가입 함수
     @Override
     public SignUpResponseDto.SignUpResponse signUp(SignUpRequestDto.SignupRequest request) {
+        // 1. Member 객체 생성 및 초기화
         Member newMember = Member.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -107,17 +108,18 @@ public class MemberServiceImpl implements MemberService {
                 .phone(request.getPhone())
                 .businessNum(request.getBusinessNum())
                 .signUpRoute(request.getSignupRoute())
-                .companies(new ArrayList<>())
-                .authorityList(new ArrayList<>())
-                .consultingList(new ArrayList<>())
+                .companies(new ArrayList<>()) // 초기화된 리스트
+                .authorityList(new ArrayList<>()) // 초기화된 리스트
+                .consultingList(new ArrayList<>()) // 초기화된 리스트
                 .build();
 
+        // 2. Authority 생성 및 추가
         Authority authority = Authority.builder()
                 .type(Authorities.ROLE_ADMIN)
                 .build();
-
         newMember.addRole(authority);
 
+        // 3. Company 생성 및 추가
         Company company = Company.builder()
                 .name(request.getName())
                 .companySize("")
@@ -125,35 +127,23 @@ public class MemberServiceImpl implements MemberService {
                 .painPoint("")
                 .build();
 
+        // Member와 Company 연결
         newMember.addCompany(company);
 
-        List<Authority> authorities = newMember.getAuthorityList().stream()
-                .map(Function.identity())
-                .collect(Collectors.toList());
-
-        List<Company> newCompanies = new ArrayList<>();
-        newCompanies.add(company);
-
-        newMember.setAuthorityList(authorities);
-        newMember.setCompanies(newCompanies);
-
+        // 4. Consulting 생성 및 추가
         Consulting consulting = Consulting.builder()
                 .company(company)
                 .member(newMember)
                 .build();
+        newMember.addConsulting(consulting);
 
-        List<Consulting> newConsultings = new ArrayList<>();
-
-        newConsultings.add(consulting);
-        newMember.setConsultingList(newConsultings);
-
+        // 5. Member 저장
         memberRepository.save(newMember);
 
-        SignUpResponseDto.SignUpResponse response = SignUpResponseDto.SignUpResponse.builder()
+        // 6. 응답 생성
+        return SignUpResponseDto.SignUpResponse.builder()
                 .name(newMember.getName())
                 .build();
-
-        return response;
     }
 
     // 로그인 함수
