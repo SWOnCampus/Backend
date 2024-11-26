@@ -3,6 +3,7 @@ package com.swOnCampus.AIPlatform.domain.member.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swOnCampus.AIPlatform.domain.consulting.entity.Company;
+import com.swOnCampus.AIPlatform.domain.consulting.entity.Consulting;
 import com.swOnCampus.AIPlatform.domain.member.entity.Authority;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.repository.MemberRepository;
@@ -108,6 +109,7 @@ public class MemberServiceImpl implements MemberService {
                 .signUpRoute(request.getSignupRoute())
                 .companies(new ArrayList<>())
                 .authorityList(new ArrayList<>())
+                .consultingList(new ArrayList<>())
                 .build();
 
         Authority authority = Authority.builder()
@@ -134,6 +136,16 @@ public class MemberServiceImpl implements MemberService {
 
         newMember.setAuthorityList(authorities);
         newMember.setCompanies(newCompanies);
+
+        Consulting consulting = Consulting.builder()
+                .company(company)
+                .member(newMember)
+                .build();
+
+        List<Consulting> newConsultings = new ArrayList<>();
+
+        newConsultings.add(consulting);
+        newMember.setConsultingList(newConsultings);
 
         memberRepository.save(newMember);
 
