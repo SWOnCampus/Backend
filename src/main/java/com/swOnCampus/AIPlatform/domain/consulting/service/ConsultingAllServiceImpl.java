@@ -8,6 +8,7 @@ import com.swOnCampus.AIPlatform.domain.consulting.web.dto.request.ConsultingAll
 import com.swOnCampus.AIPlatform.domain.consulting.web.dto.response.ConsultingAllResponseDto;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.member.repository.MemberRepository;
+import com.swOnCampus.AIPlatform.domain.report.service.ReportServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,12 +16,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Base64;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -31,6 +32,7 @@ public class ConsultingAllServiceImpl implements ConsultingAllService {
     private final ConsultingRepository consultingRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final ReportServiceImpl reportService;
 
     @Value(value = "${ai.api.url}")
     private String apiUrl;
@@ -90,6 +92,7 @@ public class ConsultingAllServiceImpl implements ConsultingAllService {
 
             return ConsultingAllResponseDto.ConsultingAllResponse.builder()
                     .result(result)
+                    .pdf(createPDF(result))
                     .build();
 
         }
@@ -97,5 +100,18 @@ public class ConsultingAllServiceImpl implements ConsultingAllService {
             e.printStackTrace();
             throw new RuntimeException("전체 컨설팅 생성에 실패하였습니다.");
         }
+    }
+
+    public String createPDF(String result){
+        String summaryHtml = result.replace("\n", "<br />");
+        String renderedMarkdown = reportService.renderMarkdown(summaryHtml);
+
+        Map<String, Object> contextVariables = Map.of(
+                "content", renderedMarkdown
+        );
+        String html = reportService.createHtmlFromTemplate(contextVariables);
+        byte[] pdfBytes = reportService.convertHtmlToPdf(html);
+
+        return Base64.getEncoder().encodeToString(pdfBytes);
     }
 }

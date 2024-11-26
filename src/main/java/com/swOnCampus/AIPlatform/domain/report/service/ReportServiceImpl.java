@@ -7,9 +7,6 @@ import com.swOnCampus.AIPlatform.domain.consulting.repository.ConsultingReposito
 import com.swOnCampus.AIPlatform.domain.report.exception.ReportErrorCode;
 import com.swOnCampus.AIPlatform.domain.report.web.dto.ReportingResponse;
 import com.swOnCampus.AIPlatform.global.exception.GlobalException;
-import java.io.ByteArrayOutputStream;
-import java.util.Base64;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -19,6 +16,10 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +53,7 @@ public class ReportServiceImpl implements ReportService {
         return response;
     }
 
-    private String createHtmlFromTemplate(Map<String, Object> contextVariables) {
+    public String createHtmlFromTemplate(Map<String, Object> contextVariables) {
         String templateName = "reporting-summary-template";
         Context context = new Context();
         context.setVariables(contextVariables);
@@ -60,7 +61,7 @@ public class ReportServiceImpl implements ReportService {
         return templateEngine.process(templateName, context);
     }
 
-    private byte[] convertHtmlToPdf(String html) {
+    public byte[] convertHtmlToPdf(String html) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(html);
@@ -83,7 +84,7 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
-    private String renderMarkdown(String markdownText) {
+    public String renderMarkdown(String markdownText) {
         Parser parser = Parser.builder().build();
         HtmlRenderer renderer = HtmlRenderer.builder().build();
         return renderer.render(parser.parse(markdownText));

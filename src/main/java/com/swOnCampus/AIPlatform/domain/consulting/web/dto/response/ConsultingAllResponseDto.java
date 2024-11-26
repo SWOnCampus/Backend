@@ -13,5 +13,6 @@ public class ConsultingAllResponseDto {
     @NoArgsConstructor
     public static class ConsultingAllResponse {
         private String result;
+        private String pdf;
     }
 }
