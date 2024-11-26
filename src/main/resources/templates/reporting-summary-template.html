@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>리포팅 요약 pdf</title>
+  <style>
+    body {
+      font-family: 'NanumBarunGothic', sans-serif;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<h1>컨설팅 결과</h1>
+<p th:utext="${content}"></p>
+</body>
+</html>
