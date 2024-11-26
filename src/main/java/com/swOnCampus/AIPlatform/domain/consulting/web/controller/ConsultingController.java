@@ -61,6 +61,21 @@ public class ConsultingController {
         return ResponseEntity.ok(response);
     }
 
+
+    @Operation(summary = "상세 컨설팅 생성 API 요청", description = "요약본이 아닌 전체 컨설팅 정보 생성")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "COMMON200",
+                    description = "요청 성공",
+                    content = {
+                            @Content(
+                                    schema = @Schema(
+                                            implementation = ConsultingAllResponseDto.ConsultingAllResponse.class
+                                    )
+                            )
+                    }
+            )
+    })
     // 컨설팅 결과 전체 상세 보기 (요약 x)
     @PostMapping("/all")
     public ResponseEntity<ApiResponse<ConsultingAllResponseDto.ConsultingAllResponse>> getAllConsulting(@LoginMember Member member, @RequestBody ConsultingAllRequestDto.ConsultingAllRequest request){
