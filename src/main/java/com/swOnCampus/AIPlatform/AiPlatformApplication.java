@@ -15,8 +15,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 })
 public class AiPlatformApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AiPlatformApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AiPlatformApplication.class, args);
+    }
 
 }
