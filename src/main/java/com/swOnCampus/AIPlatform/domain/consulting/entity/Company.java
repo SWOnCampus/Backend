@@ -44,9 +44,6 @@ public class Company extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String painPoint;
 
-    @OneToOne(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Consulting consulting;
-
     @Builder
     public Company(Member member, String name, String companySize, String industry,
         String painPoint) {
@@ -55,5 +52,9 @@ public class Company extends BaseEntity {
         this.companySize = companySize;
         this.industry = industry;
         this.painPoint = painPoint;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
     }
 }

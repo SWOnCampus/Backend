@@ -37,7 +37,7 @@ public class MemberController {
                     }
             )
     })
-    @GetMapping("/email-check")
+    @PostMapping ("/email-check")
     public ResponseEntity<ApiResponse<?>> emailCheck(@Valid @RequestBody EmailCheckRequestDto.EmailCheckRequest request){
         if(memberService.isExistEmail(request.getEmail())){
 

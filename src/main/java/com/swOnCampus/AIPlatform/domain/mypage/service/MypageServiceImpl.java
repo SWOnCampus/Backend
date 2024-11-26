@@ -32,7 +32,7 @@ public class MypageServiceImpl implements MypageService {
                 .email(member.getEmail())
                 .name(member.getName())
                 .phone(member.getPhone())
-                .corporationNum(member.getCorporation())
+                .corporationNum(member.getBusinessNum())
                 .reports(new ArrayList<>())
                 .build();
 

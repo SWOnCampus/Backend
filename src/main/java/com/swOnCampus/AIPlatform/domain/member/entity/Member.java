@@ -1,6 +1,7 @@
 package com.swOnCampus.AIPlatform.domain.member.entity;
 
 import com.swOnCampus.AIPlatform.domain.consulting.entity.Company;
+import com.swOnCampus.AIPlatform.domain.consulting.entity.Consulting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,9 +46,6 @@ public class Member {
     @Column(name = "business_num")
     private String businessNum;
 
-    @Column(name = "corporation")
-    private String corporation;
-
     @Column(name = "sign_up_route")
     private String signUpRoute;
 
@@ -55,8 +55,21 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Company> companies;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Consulting> consultingList;
+
     public void addRole(Authority authority) {
         authorityList.add(authority);
         authority.setMember(this);
+    }
+
+    public void addCompany(Company company) {
+        companies.add(company);
+        company.setMember(this);
+    }
+
+    public void addConsulting(Consulting consulting) {
+        consultingList.add(consulting);
+        consulting.setMember(this);
     }
 }

@@ -1,14 +1,8 @@
 package com.swOnCampus.AIPlatform.domain.consulting.entity;
 
+import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.global.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,10 +28,23 @@ public class Consulting extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String summary;
 
+    @Column(columnDefinition = "TEXT", name = "consulting_all")
+    private String consultingAll;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member", nullable = false)
+    private Member member;
+
     @Builder
-    public Consulting(Company company, String result, String summary) {
+    public Consulting(Company company, String result, String summary, String consultingAll, Member member) {
         this.company = company;
         this.result = result;
         this.summary = summary;
+        this.consultingAll = consultingAll;
+        this.member = member;
+    }
+
+    public void setMember(Member member) {
+        this.company.setMember(member);
     }
 }
