@@ -80,7 +80,7 @@ public class ConsultingAllServiceImpl implements ConsultingAllService {
 
             Consulting newAllConsulting = Consulting.builder()
                     .consultingAll(result)
-                    .member(found)
+                    .result(result)
                     .build();
 
             found.addConsulting(newAllConsulting);

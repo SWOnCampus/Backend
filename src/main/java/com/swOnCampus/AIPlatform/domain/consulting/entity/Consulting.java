@@ -19,7 +19,7 @@ public class Consulting extends BaseEntity {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "company_id", nullable = false)
+    @JoinColumn(name = "company_id")
     private Company company; // 기업 입력 정보 (채팅방)
 
     @Column(columnDefinition = "TEXT")
@@ -45,6 +45,6 @@ public class Consulting extends BaseEntity {
     }
 
     public void setMember(Member member) {
-        this.company.setMember(member);
+        this.member = member;
     }
 }
