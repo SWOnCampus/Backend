@@ -1,6 +1,7 @@
 package com.swOnCampus.AIPlatform.domain.member.entity;
 
 import com.swOnCampus.AIPlatform.domain.consulting.entity.Company;
+import com.swOnCampus.AIPlatform.domain.consulting.entity.Consulting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,6 +55,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Company> companies;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Consulting> consultingList;
+
     public void addRole(Authority authority) {
         authorityList.add(authority);
         authority.setMember(this);
@@ -62,5 +66,10 @@ public class Member {
     public void addCompany(Company company) {
         companies.add(company);
         company.setMember(this);
+    }
+
+    public void addConsulting(Consulting consulting) {
+        consultingList.add(consulting);
+        consulting.setMember(this);
     }
 }
