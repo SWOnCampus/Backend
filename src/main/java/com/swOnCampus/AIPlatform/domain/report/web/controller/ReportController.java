@@ -26,7 +26,7 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    @Operation(summary = "컨설팅 PDF API 요청", description = "컨설팅 결과 PDF 생성 API 요청")
+    @Operation(summary = "컨설팅 요약 PDF API 요청", description = "컨설팅 요약 PDF 생성 API 요청")
     @ApiResponses(value = {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "COMMON200",
