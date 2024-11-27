@@ -50,7 +50,7 @@ public class ConsultingController {
     public ResponseEntity<ApiResponse<?>> createConsulting(
         @LoginMember Member member,
         @RequestBody CompanyInfoRequest companyInfoRequest,
-        @RequestParam(required = false) Long companyId // 채팅방 id
+        @RequestParam(name="companyId", required = false) Long companyId // 채팅방 id
     ) {
         ConsultingResponse result = companyService.createOrGetConsulting(
             member.getMemberId(), companyInfoRequest, companyId);

@@ -28,11 +28,15 @@ public class ConsultingServiceImpl implements ConsultingService {
         return response;
     }
 
-    private ConsultingAiResponse sendRequestToAi(ConsultingRequest request, boolean summary) {
+    private ConsultingAiResponse sendRequestToAi(ConsultingRequest jsonRequest, boolean summary) {
         String url = UriComponentsBuilder.fromHttpUrl(aiApiUrl + "/api/consulting")
             .queryParam("summary", summary)
+            .queryParam("test", true)
             .toUriString();
 
-        return restTemplate.postForObject(url, request, ConsultingAiResponse.class);
+        ConsultingAiResponse response = restTemplate.postForObject(url, jsonRequest,
+            ConsultingAiResponse.class);
+
+        return response;
     }
 }

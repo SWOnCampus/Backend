@@ -63,6 +63,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         Consulting consulting = Consulting.builder()
             .company(company)
+            .member(member)
             .result(result.result())
             .summary(result.summary())
             .build();

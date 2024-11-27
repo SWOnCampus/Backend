@@ -43,7 +43,7 @@ public class ReportController {
     @GetMapping()
     public ResponseEntity<ApiResponse<?>> createReportingPdf(
         @LoginMember Member member,
-        @RequestParam Long companyId // 채팅방 id
+        @RequestParam(name="companyId") Long companyId // 채팅방 id
     ) {
         ReportingResponse reportingResponse = reportService.createReportingPdf(
             member.getMemberId(), companyId);
