@@ -1,5 +1,6 @@
 package com.swOnCampus.AIPlatform.domain.report.web.controller;
 
+import com.swOnCampus.AIPlatform.domain.consulting.web.dto.request.CompanyInfoRequest;
 import com.swOnCampus.AIPlatform.domain.member.entity.Member;
 import com.swOnCampus.AIPlatform.domain.report.service.ReportService;
 import com.swOnCampus.AIPlatform.domain.report.web.dto.ReportingResponse;
@@ -14,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "컨설팅 PDF 생성 API", description = "컨설팅 결과 PDF 생성 관련 API")
@@ -43,10 +44,11 @@ public class ReportController {
     @GetMapping()
     public ResponseEntity<ApiResponse<?>> createReportingPdf(
         @LoginMember Member member,
-        @RequestParam(name="companyId") Long companyId // 채팅방 id
+//        @RequestParam(name="companyId") Long companyId // 채팅방 id
+        @RequestBody CompanyInfoRequest companyRequest // 임시코드
     ) {
         ReportingResponse reportingResponse = reportService.createReportingPdf(
-            member.getMemberId(), companyId);
+            member.getMemberId(), /*companyId*/companyRequest);
 
         ApiResponse<ReportingResponse> response = ApiResponse.createSuccess(
             HttpStatus.OK.value(),

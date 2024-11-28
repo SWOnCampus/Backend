@@ -1,12 +1,17 @@
 package com.swOnCampus.AIPlatform.domain.report.service;
 
 import com.lowagie.text.pdf.BaseFont;
-import com.swOnCampus.AIPlatform.domain.consulting.entity.Consulting;
-import com.swOnCampus.AIPlatform.domain.consulting.exception.ConsultingErrorCode;
 import com.swOnCampus.AIPlatform.domain.consulting.repository.ConsultingRepository;
+import com.swOnCampus.AIPlatform.domain.consulting.service.ConsultingService;
+import com.swOnCampus.AIPlatform.domain.consulting.web.dto.ConsultingSave;
+import com.swOnCampus.AIPlatform.domain.consulting.web.dto.request.CompanyInfoRequest;
+import com.swOnCampus.AIPlatform.domain.consulting.web.dto.request.ConsultingRequest;
 import com.swOnCampus.AIPlatform.domain.report.exception.ReportErrorCode;
 import com.swOnCampus.AIPlatform.domain.report.web.dto.ReportingResponse;
 import com.swOnCampus.AIPlatform.global.exception.GlobalException;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -17,26 +22,33 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Base64;
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
 
     private final TemplateEngine templateEngine;
     private final ConsultingRepository consultingRepository;
+    private final ConsultingService consultingService; // 임시 코드
 
     @Value(value = "${report.font.path}")
     private String fontPath;
 
     @Override
-    public ReportingResponse createReportingPdf(Long memberId, Long companyId) {
-        Consulting consulting = consultingRepository.findByCompanyId(companyId)
-            .orElseThrow(() -> new GlobalException(ConsultingErrorCode.NOT_EXIST_CONSULTING));
+    public ReportingResponse createReportingPdf(Long memberId,/* Long companyId*/
+        CompanyInfoRequest request) {
+//        Consulting consulting = consultingRepository.findByCompanyId(companyId)
+//            .orElseThrow(() -> new GlobalException(ConsultingErrorCode.NOT_EXIST_CONSULTING));
+        // 임시 코드
+        ConsultingRequest consultingRequest = new ConsultingRequest(
+            request.industry(),
+            request.companySize(),
+            request.painPoint()
+        );
 
-        String summaryHtml = consulting.getSummary().replace("\n", "<br />");
+        ConsultingSave result = consultingService.getConsultingResult(consultingRequest);
+
+//        String summaryHtml = consulting.getSummary().replace("\n", "<br />");
+        String summaryHtml = result.summary().replace("\n", "<br />"); // 임시 코드
         String renderedMarkdown = renderMarkdown(summaryHtml);
 
         Map<String, Object> contextVariables = Map.of(
@@ -46,7 +58,8 @@ public class ReportServiceImpl implements ReportService {
         byte[] pdfBytes = convertHtmlToPdf(html);
 
         ReportingResponse response = new ReportingResponse(
-            consulting.getSummary(),
+//            consulting.getSummary(),
+            result.summary(), // 임시 코드
             Base64.getEncoder().encodeToString(pdfBytes)
         );
 
