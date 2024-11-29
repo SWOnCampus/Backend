@@ -31,7 +31,7 @@ public class ConsultingServiceImpl implements ConsultingService {
     private ConsultingAiResponse sendRequestToAi(ConsultingRequest jsonRequest, boolean summary) {
         String url = UriComponentsBuilder.fromHttpUrl(aiApiUrl + "/api/consulting")
             .queryParam("summary", summary)
-            .queryParam("test", true)
+            .queryParam("test", false)
             .toUriString();
 
         ConsultingAiResponse response = restTemplate.postForObject(url, jsonRequest,

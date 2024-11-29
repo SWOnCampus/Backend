@@ -45,7 +45,7 @@ public class ConsultingAllServiceImpl implements ConsultingAllService {
 
         URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
                 .queryParam("summary", "False")
-                .queryParam("test", "True")
+                .queryParam("test", "False")
                 .build()
                 .toUri();
 
